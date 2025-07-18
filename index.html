@@ -30,8 +30,153 @@
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
 
-    <!-- Conteúdo omitido por brevidade, pois é muito longo e não necessário duplicar -->
-    <!-- Recomendado colar o conteúdo completo na aplicação de uso -->
+    <div id="calculadora-roi-container" class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-10">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Calculadora de Rentabilidade</h1>
+            <p class="text-gray-600 mt-2">Descubra o potencial de lucro do seu imóvel mobiliado.</p>
+        </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+            <div class="space-y-6">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700 border-b-2 border-gray-200 pb-2 mb-4">1. Investimento Total</h2>
+                    
+                    <div class="mb-4">
+                        <label for="precoCompra" class="block text-sm font-medium text-gray-700 mb-1">Preço de Compra (R$)</label>
+                        <input type="text" id="precoCompra" value="400.000,00" inputmode="decimal" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="custosAquisicaoSlider" class="block text-sm font-medium text-gray-700 mb-1">Custos de Aquisição (%)</label>
+                        <div class="flex items-center space-x-4">
+                           <input type="range" id="custosAquisicaoSlider" min="0" max="15" value="5" step="0.5" class="w-full">
+                           <span id="custosAquisicaoValue" class="font-semibold text-gray-800 w-16 text-center">5,0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="custoMobilia" class="block text-sm font-medium text-gray-700 mb-1">Reforma e Mobília (R$)</label>
+                        <input type="text" id="custoMobilia" value="20.000,00" inputmode="decimal" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700 border-b-2 border-gray-200 pb-2 mb-4">2. Receitas Anuais</h2>
+                    
+                    <div class="mb-4">
+                        <label for="aluguelMensal" class="block text-sm font-medium text-gray-700 mb-1">Aluguel Mensal (R$)</label>
+                        <input type="text" id="aluguelMensal" value="3.600,00" inputmode="decimal" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="valorizacaoAnualSlider" class="block text-sm font-medium text-gray-700 mb-1">Valorização Anual (%)</label>
+                        <div class="flex items-center space-x-4">
+                            <input type="range" id="valorizacaoAnualSlider" min="0" max="20" value="8" step="0.5" class="w-full">
+                            <span id="valorizacaoAnualValue" class="font-semibold text-gray-800 w-16 text-center">8,0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-100 rounded-xl p-6 md:p-8 flex flex-col justify-center">
+                <h2 class="text-xl font-bold text-gray-800 text-center mb-6">Resultado da Simulação</h2>
+                
+                <div class="space-y-4 text-gray-700">
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg">
+                        <span class="font-medium">Investimento Total:</span>
+                        <span id="resultadoInvestimento" class="font-bold text-lg">R$ 440.000,00</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg">
+                        <span class="font-medium">Lucro Anual (Aluguel):</span>
+                        <span id="resultadoLucroAluguel" class="font-bold text-lg text-green-600">+ R$ 43.200,00</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg">
+                        <span class="font-medium">Lucro Anual (Valorização):</span>
+                        <span id="resultadoValorizacao" class="font-bold text-lg text-green-600">+ R$ 32.000,00</span>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t-2 border-dashed border-gray-300 text-center">
+                    <p class="text-lg font-medium text-gray-800 mb-2">Rentabilidade Anual (ROI)</p>
+                    <p id="resultadoROI" class="text-5xl md:text-6xl font-bold brand-color">17,09%</p>
+                    <p class="text-sm text-gray-500 mt-2">ao ano</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-8 text-xs text-gray-400">
+            <p>*Esta é uma simulação e os valores podem variar. Consulte um especialista para uma análise aprofundada.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = {
+                precoCompra: document.getElementById('precoCompra'),
+                custosAquisicaoSlider: document.getElementById('custosAquisicaoSlider'),
+                custoMobilia: document.getElementById('custoMobilia'),
+                aluguelMensal: document.getElementById('aluguelMensal'),
+                valorizacaoAnualSlider: document.getElementById('valorizacaoAnualSlider'),
+            };
+
+            const displays = {
+                custosAquisicaoValue: document.getElementById('custosAquisicaoValue'),
+                valorizacaoAnualValue: document.getElementById('valorizacaoAnualValue'),
+                resultadoInvestimento: document.getElementById('resultadoInvestimento'),
+                resultadoLucroAluguel: document.getElementById('resultadoLucroAluguel'),
+                resultadoValorizacao: document.getElementById('resultadoValorizacao'),
+                resultadoROI: document.getElementById('resultadoROI'),
+            };
+            
+            const formatForDisplay = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+            const parseToNumber = (valueStr) => parseFloat(String(valueStr).replace(/\./g, '').replace(',', '.')) || 0;
+            const formatForInput = (value) => value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            function calculateROI() {
+                const precoCompra = parseToNumber(inputs.precoCompra.value);
+                const custoMobilia = parseToNumber(inputs.custoMobilia.value);
+                const aluguelMensal = parseToNumber(inputs.aluguelMensal.value);
+                const custosAquisicaoPerc = parseFloat(inputs.custosAquisicaoSlider.value) || 0;
+                const valorizacaoAnualPerc = parseFloat(inputs.valorizacaoAnualSlider.value) || 0;
+
+                displays.custosAquisicaoValue.textContent = custosAquisicaoPerc.toFixed(1).replace('.',',') + '%';
+                displays.valorizacaoAnualValue.textContent = valorizacaoAnualPerc.toFixed(1).replace('.',',') + '%';
+                
+                const valorCustosAquisicao = precoCompra * (custosAquisicaoPerc / 100);
+                const investimentoTotal = precoCompra + valorCustosAquisicao + custoMobilia;
+                const lucroAnualAluguel = aluguelMensal * 12;
+                const lucroAnualValorizacao = precoCompra * (valorizacaoAnualPerc / 100);
+                const lucroTotalAnual = lucroAnualAluguel + lucroAnualValorizacao;
+                const roi = investimentoTotal > 0 ? (lucroTotalAnual / investimentoTotal) * 100 : 0;
+
+                displays.resultadoInvestimento.textContent = formatForDisplay(investimentoTotal);
+                displays.resultadoLucroAluguel.textContent = '+ ' + formatForDisplay(lucroAnualAluguel);
+                displays.resultadoValorizacao.textContent = '+ ' + formatForDisplay(lucroAnualValorizacao);
+                displays.resultadoROI.textContent = roi.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+            }
+
+            const currencyInputs = [inputs.precoCompra, inputs.custoMobilia, inputs.aluguelMensal];
+            const sliderInputs = [inputs.custosAquisicaoSlider, inputs.valorizacaoAnualSlider];
+            
+            currencyInputs.forEach(input => {
+                input.addEventListener('input', calculateROI);
+                input.addEventListener('change', (e) => {
+                    const numericValue = parseToNumber(e.target.value);
+                    e.target.value = formatForInput(numericValue);
+                });
+            });
+
+            sliderInputs.forEach(slider => {
+                slider.addEventListener('input', calculateROI);
+            });
+
+            currencyInputs.forEach(input => {
+                const numericValue = parseToNumber(input.value);
+                input.value = formatForInput(numericValue);
+            });
+            calculateROI();
+        });
+    </script>
 </body>
 </html>
